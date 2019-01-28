@@ -18,16 +18,45 @@ class ViewController: UIViewController {
     var formulaArray = ["miles to kilometers",
                         "kilometers to miles",
                         "feet to meters",
+                        "yards to meters",
                         "meters to feet",
                         "meters to yards"]
     
     var fromUnits = ""
     var toUnits = ""
+    var conversionString = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         formulaPicker.dataSource = self
         formulaPicker.delegate = self
+    }
+    
+    func calculateConversion() {
+        var outputValue = 0.0
+        if let inputValue = Double(userInput.text!) {
+            switch conversionString {
+                case "miles to kilometers":
+                    outputValue = inputValue / 0.62137
+                case "kilometers to miles":
+                    outputValue = inputValue * 0.62137
+                case "feet to meters":
+                    outputValue = inputValue / 3.2808
+                case "yards to meters":
+                    outputValue = inputValue / 1.0936
+                case "meters to feet":
+                    outputValue = inputValue * 3.2808
+                case "meters to yards":
+                    outputValue = inputValue * 1.0936
+                default:
+                    print("we will show alert later on")
+            }
+            resultsLabel.text = "\(inputValue) \(fromUnits) = \(outputValue) \(toUnits)"
+        }
+        else {
+            print("we will put in alert later")
+        }
+        
     }
     
     @IBAction func convertButtonPressed(_ sender: UIButton) {
@@ -49,11 +78,13 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        conversionString = formulaArray[row]
         let unitsArray = formulaArray[row].components(separatedBy: " to ")
         fromUnits = unitsArray[0]
         toUnits = unitsArray[1]
         fromUnitsLabel.text = fromUnits
         resultsLabel.text = toUnits
+        calculateConversion()
     }
     
 }
