@@ -10,6 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var decimalSegment: UISegmentedControl!
     @IBOutlet weak var userInput: UITextField!
     @IBOutlet weak var fromUnitsLabel: UILabel!
     @IBOutlet weak var resultsLabel: UILabel!
@@ -30,36 +31,43 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         formulaPicker.dataSource = self
         formulaPicker.delegate = self
+        conversionString = formulaArray[formulaPicker.selectedRow(inComponent: 0)]
     }
     
     func calculateConversion() {
+        guard let inputValue = Double (userInput.text!) else {
+            return
+        }
         var outputValue = 0.0
-        if let inputValue = Double(userInput.text!) {
-            switch conversionString {
-                case "miles to kilometers":
-                    outputValue = inputValue / 0.62137
-                case "kilometers to miles":
-                    outputValue = inputValue * 0.62137
-                case "feet to meters":
-                    outputValue = inputValue / 3.2808
-                case "yards to meters":
-                    outputValue = inputValue / 1.0936
-                case "meters to feet":
-                    outputValue = inputValue * 3.2808
-                case "meters to yards":
-                    outputValue = inputValue * 1.0936
-                default:
-                    print("we will show alert later on")
-            }
-            resultsLabel.text = "\(inputValue) \(fromUnits) = \(outputValue) \(toUnits)"
+        switch conversionString {
+            case "miles to kilometers":
+                outputValue = inputValue / 0.62137
+            case "kilometers to miles":
+                outputValue = inputValue * 0.62137
+            case "feet to meters":
+                outputValue = inputValue / 3.2808
+            case "yards to meters":
+                outputValue = inputValue / 1.0936
+            case "meters to feet":
+                outputValue = inputValue * 3.2808
+            case "meters to yards":
+                outputValue = inputValue * 1.0936
+            default:
+                print("we will show alert later on")
         }
-        else {
-            print("we will put in alert later")
-        }
-        
+        let segmentedIndex = decimalSegment.selectedSegmentIndex
+        let formatString = (segmentedIndex < decimalSegment.numberOfSegments-1 ? "%.\(segmentedIndex + 1)f": "%f")
+        let outputString = String(format: formatString, outputValue)
+        resultsLabel.text = "\(inputValue) \(fromUnits) = \(outputString) \(toUnits)"
     }
     
     @IBAction func convertButtonPressed(_ sender: UIButton) {
+        calculateConversion()
+    }
+    
+    
+    @IBAction func decimalSelected(_ sender: UISegmentedControl) {
+        calculateConversion()
     }
     
 }
@@ -88,4 +96,3 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
 }
-
